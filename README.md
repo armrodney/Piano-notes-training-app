@@ -34,28 +34,35 @@ Everything is static — no build step, no server required.
 **On a phone (online):** open the live link above in Chrome and use the
 browser's "Add to Home screen" option for an app-like icon.
 
-**On Android (fully offline):** download the APK from the
+**On Android (fully offline):** download an APK from the
 [latest Android release](https://github.com/armrodney/Piano-notes-training-app/releases/tag/android-latest)
 and sideload it — the web app is bundled inside, so it runs with no network
 at all after install. You'll need to enable "Install unknown apps" for your
-browser/file manager in Android settings; this is a debug-signed build for
-personal sideloading, not a Play Store release. See `android-app/README.md`
-for how it's built.
+browser/file manager in Android settings; these are debug-signed builds for
+personal sideloading, not Play Store releases.
+
+- `staff-trainer.apk` — the standard version (see `android-app/README.md`)
+- `staff-trainer-eink.apk` — high-contrast variant for grayscale e-ink
+  displays: correct/incorrect are shown via solid fill vs. diagonal
+  hatching and shape, not color, since e-ink can't render hue and is slow
+  to refresh (see `android-app-eink/README.md` and `style-eink.css`)
 
 ## Project structure
 
 ```
-index.html
+index.html          regular web app
 style.css
+index-eink.html      e-ink-optimized web app (same JS, different CSS)
+style-eink.css
 js/
   notes.js     note/clef data model, keyboard range logic
   staff.js     SVG staff rendering + hit-testing
   keyboard.js  SVG piano keyboard rendering + hit-testing
   stats.js     localStorage-backed stats tracking
   app.js       question generation, settings, game logic
-android-app/   Capacitor wrapper that packages the app as an offline .apk
-  (see android-app/README.md)
-.github/workflows/build-apk.yml   CI that builds & publishes the APK
+android-app/        Capacitor wrapper -> offline .apk (see its README)
+android-app-eink/    Capacitor wrapper for the e-ink build (see its README)
+.github/workflows/build-apk.yml   CI that builds & publishes both APKs
 ```
 
 ## Non-goals

@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Android APKs
 
 on:
   workflow_dispatch:
@@ -7,8 +7,11 @@ on:
     paths:
       - 'index.html'
       - 'style.css'
+      - 'index-eink.html'
+      - 'style-eink.css'
       - 'js/**'
       - 'android-app/**'
+      - 'android-app-eink/**'
       - '.github/workflows/build-apk.yml'
 
 permissions:
@@ -34,41 +37,73 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install dependencies
+      # ---------- Regular variant ----------
+      - name: Install dependencies (regular)
         working-directory: android-app
         run: npm ci
 
-      - name: Copy current web app into www/
+      - name: Copy current web app into www/ (regular)
         working-directory: android-app
         run: |
           mkdir -p www/js
           cp ../index.html ../style.css www/
           cp ../js/*.js www/js/
 
-      - name: Sync Capacitor Android project
+      - name: Sync Capacitor Android project (regular)
         working-directory: android-app
         run: npx cap sync android
 
-      - name: Build debug APK
+      - name: Build debug APK (regular)
         working-directory: android-app/android
         run: |
           chmod +x gradlew
           ./gradlew assembleDebug
 
-      - name: Upload APK as workflow artifact
+      - name: Rename regular APK
+        run: cp android-app/android/app/build/outputs/apk/debug/app-debug.apk staff-trainer.apk
+
+      # ---------- E-ink variant ----------
+      - name: Install dependencies (e-ink)
+        working-directory: android-app-eink
+        run: npm ci
+
+      - name: Copy current web app into www/ (e-ink)
+        working-directory: android-app-eink
+        run: |
+          mkdir -p www/js
+          cp ../index-eink.html www/index.html
+          cp ../style-eink.css www/
+          cp ../js/*.js www/js/
+
+      - name: Sync Capacitor Android project (e-ink)
+        working-directory: android-app-eink
+        run: npx cap sync android
+
+      - name: Build debug APK (e-ink)
+        working-directory: android-app-eink/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Rename e-ink APK
+        run: cp android-app-eink/android/app/build/outputs/apk/debug/app-debug.apk staff-trainer-eink.apk
+
+      # ---------- Publish ----------
+      - name: Upload APKs as workflow artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: staff-trainer-debug-apk
-          path: android-app/android/app/build/outputs/apk/debug/app-debug.apk
+          name: staff-trainer-apks
+          path: |
+            staff-trainer.apk
+            staff-trainer-eink.apk
 
-      - name: Publish APK to a stable release
-        working-directory: android-app/android
+      - name: Publish APKs to a stable release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh release delete android-latest --yes --repo "${{ github.repository }}" || true
           gh release create android-latest \
-            app/build/outputs/apk/debug/app-debug.apk \
+            staff-trainer.apk staff-trainer-eink.apk \
             --repo "${{ github.repository }}" \
-            --title "Staff Trainer (Android, offline APK)" \
-            --notes "Auto-built debug APK bundling the current web app for fully offline use. Sideload only — not signed for the Play Store. Rebuilt automatically whenever the web app changes."
+            --title "Staff Trainer (Android, offline APKs)" \
+            --notes "Auto-built debug APKs bundling the current web app for fully offline use. staff-trainer.apk is the standard color version; staff-trainer-eink.apk is a high-contrast, pattern-based variant for grayscale e-ink displays. Sideload only — not signed for the Play Store. Rebuilt automatically whenever the web app changes."
