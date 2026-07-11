@@ -18,9 +18,15 @@ HTML/CSS/JS.
 - **Extended range** toggle — adds ledger-line notes above/below each staff
   (and the piano keyboard range grows to match)
 - Natural notes only (no accidentals)
-- Immediate feedback: correct answers auto-advance quickly, incorrect
-  answers reveal the right answer and pause before auto-advancing (no
-  button to click either way)
+- The on-screen piano keyboard shows a randomly-shifted 2+ octave slice
+  each question (not always starting on the same note), so keys have to be
+  found relative to the black-key groups rather than memorized by screen
+  position
+- Immediate feedback: correct answers auto-advance quickly; incorrect
+  answers highlight every matching position for the wrong guess (a letter
+  can occur more than once in range) alongside the right answer, label
+  the wrongly-clicked position with its letter, and pause before
+  auto-advancing (no button to click either way)
 - Keyboard shortcuts: press A–G to answer letter-guess questions
 - Session stats (overall accuracy + per-note accuracy) persisted in
   `localStorage`, with a reset button

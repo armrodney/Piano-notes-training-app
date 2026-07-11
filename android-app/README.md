@@ -12,13 +12,14 @@ repo root's `index.html`, `style.css`, and `js/` on every build (see
 ## How the APK gets built
 
 A GitHub Actions workflow (`.github/workflows/build-apk.yml`) builds this
-automatically:
-- on every push that touches `index.html`, `style.css`, `js/**`, or this
-  folder
+automatically, in the same run as the [e-ink variant](../android-app-eink):
+- on every push that touches `index.html`, `style.css`, `js/**`, or either
+  `android-app/` or `android-app-eink/`
 - or manually via the "Run workflow" button on the Actions tab
 
-It publishes the result to the `android-latest` GitHub Release on this repo,
-so the download link stays the same across rebuilds.
+It publishes the result to the `android-latest` GitHub Release on this repo
+as `staff-trainer.apk`, so the download link stays the same across
+rebuilds.
 
 The APK is **debug-signed**, meant for sideloading only (not submitted to
 the Play Store). Installing it requires enabling "Install unknown apps" for
