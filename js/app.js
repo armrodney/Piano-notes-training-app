@@ -218,7 +218,7 @@
 
   function onLetterButtonClick(letter) {
     if (state.awaitingNext) return;
-    const { note } = state.current;
+    const { note, pool } = state.current;
     const isCorrect = letterOf(note.name) === letter;
 
     stats.record(note.name, isCorrect);
@@ -236,6 +236,10 @@
       btn.classList.add('btn-incorrect');
       const correctBtn = els.letterButtons.querySelector(`[data-letter="${letterOf(note.name)}"]`);
       if (correctBtn) correctBtn.classList.add('btn-correct');
+      // Show every position where the guessed letter actually occurs (red)
+      // — there can be more than one, e.g. E/F appear twice in the
+      // standard treble range — alongside the real answer (green).
+      pool.filter((n) => letterOf(n.name) === letter).forEach((n) => markAnswerForCurrent(n, 'incorrect'));
       markAnswerForCurrent(note, 'reveal');
       showFeedback(`Not quite — that note is ${note.name[0]}.`, false);
       setTimeout(newQuestion, INCORRECT_DELAY_MS);
