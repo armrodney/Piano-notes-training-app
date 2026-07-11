@@ -126,11 +126,15 @@ body {
   fill: rgba(59, 91, 219, 0.08);
 }
 
-.click-region.region-correct {
+.note-band {
+  pointer-events: none;
+}
+
+.note-band.band-correct {
   fill: rgba(47, 158, 68, 0.18);
 }
 
-.click-region.region-incorrect {
+.note-band.band-incorrect {
   fill: rgba(224, 49, 49, 0.18);
 }
 

@@ -57,7 +57,6 @@
       this.svg.appendChild(this.baseLayer);
       this.svg.appendChild(this.noteLayer);
       this.svg.appendChild(this.regionLayer);
-      this.regionEls = new Map();
     }
 
     // Draws the 5 staff lines, clef, and (optionally) faint ledger guides
@@ -142,7 +141,6 @@
     // Calls onClick(note) when one is clicked.
     drawClickRegions(notePool, onClick) {
       this.regionLayer.innerHTML = '';
-      this.regionEls.clear();
       notePool.forEach((note) => {
         const y = positionToY(note.pos) - HALF_STEP / 2;
         const rect = el('rect', {
@@ -155,26 +153,33 @@
         });
         rect.addEventListener('click', () => onClick(note));
         this.regionLayer.appendChild(rect);
-        this.regionEls.set(note.name, rect);
       });
     }
 
     clearClickRegions() {
       this.regionLayer.innerHTML = '';
-      this.regionEls.clear();
     }
 
-    // Draws/marks a note's visual (both the notehead and, if a click
-    // region exists for it, a highlight on that region). `kind` is one of
-    // 'target' | 'correct' | 'incorrect' | 'reveal'.
+    // Draws/marks a note's visual: a background highlight band across its
+    // line/space (so the position reads clearly even when a notehead was
+    // already sitting there, e.g. revealing the answer in Staff->Letter)
+    // plus the notehead itself. `kind` is one of 'target' | 'correct' |
+    // 'incorrect' | 'reveal'.
     markAnswer(note, kind) {
+      if (kind === 'correct' || kind === 'incorrect' || kind === 'reveal') {
+        const y = positionToY(note.pos) - HALF_STEP / 2;
+        this.noteLayer.appendChild(
+          el('rect', {
+            x: REGION_X,
+            y,
+            width: REGION_W,
+            height: HALF_STEP,
+            class: `note-band ${kind === 'incorrect' ? 'band-incorrect' : 'band-correct'}`,
+          })
+        );
+      }
       const noteClass = { target: 'note-default', correct: 'note-correct', incorrect: 'note-incorrect', reveal: 'note-reveal' }[kind];
       this.drawNoteAtPos(note.pos, noteClass);
-      const rect = this.regionEls.get(note.name);
-      if (rect) {
-        if (kind === 'correct') rect.classList.add('region-correct');
-        if (kind === 'incorrect') rect.classList.add('region-incorrect');
-      }
     }
   }
 
