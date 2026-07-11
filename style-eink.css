@@ -26,17 +26,6 @@ body {
   display: none !important;
 }
 
-.app-header {
-  padding: 16px 24px;
-  border-bottom: 2px solid var(--border);
-  background: var(--panel-bg);
-}
-
-.app-header h1 {
-  font-size: 1.25rem;
-  margin: 0;
-}
-
 .layout {
   display: flex;
   flex-wrap: wrap;
