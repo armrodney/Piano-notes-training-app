@@ -31,8 +31,16 @@ Everything is static — no build step, no server required.
 
 **Locally:** open `index.html` directly in a browser.
 
-**On a phone:** open the live link above in Chrome and use the browser's
-"Add to Home screen" option for an app-like icon.
+**On a phone (online):** open the live link above in Chrome and use the
+browser's "Add to Home screen" option for an app-like icon.
+
+**On Android (fully offline):** download the APK from the
+[latest Android release](https://github.com/armrodney/Piano-notes-training-app/releases/tag/android-latest)
+and sideload it — the web app is bundled inside, so it runs with no network
+at all after install. You'll need to enable "Install unknown apps" for your
+browser/file manager in Android settings; this is a debug-signed build for
+personal sideloading, not a Play Store release. See `android-app/README.md`
+for how it's built.
 
 ## Project structure
 
@@ -45,6 +53,9 @@ js/
   keyboard.js  SVG piano keyboard rendering + hit-testing
   stats.js     localStorage-backed stats tracking
   app.js       question generation, settings, game logic
+android-app/   Capacitor wrapper that packages the app as an offline .apk
+  (see android-app/README.md)
+.github/workflows/build-apk.yml   CI that builds & publishes the APK
 ```
 
 ## Non-goals
