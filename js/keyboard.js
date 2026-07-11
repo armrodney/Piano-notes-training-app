@@ -8,7 +8,7 @@
   const BLACK_W = 24;
   const BLACK_H = 92;
   const MARGIN = 10;
-  const LABEL_SPACE = 30; // room below the keys for a wrong-click letter label
+  const LABEL_SPACE = 40; // room below the keys for a wrong-click letter label
   const NO_BLACK_AFTER = ['E', 'B']; // no black key between E-F or B-C
 
   function el(tag, attrs) {
@@ -104,7 +104,7 @@
       const cx = parseFloat(rect.getAttribute('x')) + WHITE_W / 2;
       const label = el('text', {
         x: cx,
-        y: MARGIN + WHITE_H + 23,
+        y: MARGIN + WHITE_H + 30,
         class: 'key-label',
         'text-anchor': 'middle',
       });
