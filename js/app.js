@@ -226,6 +226,7 @@
 
     if (isCorrect) {
       markAnswerForCurrent(clickedNote, 'correct');
+      validNotes.filter((n) => n.name !== clickedNote.name).forEach((n) => markAnswerForCurrent(n, 'reveal'));
       showFeedback('Correct!', true);
       setTimeout(newQuestion, CORRECT_DELAY_MS);
     } else {
