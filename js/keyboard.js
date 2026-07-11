@@ -8,6 +8,7 @@
   const BLACK_W = 24;
   const BLACK_H = 92;
   const MARGIN = 10;
+  const LABEL_SPACE = 22; // room below the keys for a wrong-click letter label
   const NO_BLACK_AFTER = ['E', 'B']; // no black key between E-F or B-C
 
   function el(tag, attrs) {
@@ -42,7 +43,7 @@
       // after it) so the group it belongs to isn't cut short.
       const trailingBlack = !NO_BLACK_AFTER.includes(notePool[notePool.length - 1].name[0]);
       const width = notePool.length * WHITE_W + MARGIN * 2 + (trailingBlack ? BLACK_W / 2 : 0);
-      const height = WHITE_H + MARGIN * 2;
+      const height = WHITE_H + MARGIN * 2 + LABEL_SPACE;
       this.svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 
       this.whiteLayer.innerHTML = '';
@@ -93,6 +94,22 @@
       const cy = MARGIN + WHITE_H - 24;
       const marker = el('circle', { cx, cy, r: 9, class: `key-marker key-marker-${kind}` });
       this.markerLayer.appendChild(marker);
+    }
+
+    // Draws a small text label under a key — used to show which letter
+    // the user's (wrong) click actually landed on.
+    labelNote(note, text) {
+      const rect = this.keyEls.get(note.name);
+      if (!rect) return;
+      const cx = parseFloat(rect.getAttribute('x')) + WHITE_W / 2;
+      const label = el('text', {
+        x: cx,
+        y: MARGIN + WHITE_H + 18,
+        class: 'key-label',
+        'text-anchor': 'middle',
+      });
+      label.textContent = text;
+      this.markerLayer.appendChild(label);
     }
   }
 

@@ -117,6 +117,12 @@ body {
   stroke-width: 2;
 }
 
+.note-label {
+  fill: var(--incorrect);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .click-region {
   fill: transparent;
   cursor: pointer;
@@ -205,6 +211,12 @@ body {
 
 .key-marker-reveal {
   fill: var(--correct);
+}
+
+.key-label {
+  fill: var(--incorrect);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 /* ---------- Letter buttons / feedback ---------- */

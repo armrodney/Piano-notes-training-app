@@ -181,6 +181,18 @@
       const noteClass = { target: 'note-default', correct: 'note-correct', incorrect: 'note-incorrect', reveal: 'note-reveal' }[kind];
       this.drawNoteAtPos(note.pos, noteClass);
     }
+
+    // Draws a small text label to the right of a position — used to show
+    // which letter the user's (wrong) click actually landed on.
+    labelNote(note, text) {
+      const label = el('text', {
+        x: NOTE_X + 22,
+        y: positionToY(note.pos) + 5,
+        class: 'note-label',
+      });
+      label.textContent = text;
+      this.noteLayer.appendChild(label);
+    }
   }
 
   global.ST = global.ST || {};

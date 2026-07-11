@@ -208,6 +208,11 @@
     view.markAnswer(note, kind);
   }
 
+  function labelAnswerForCurrent(note, text) {
+    const view = TYPE_INFO[state.current.type].target === 'staff' ? staffView : pianoView;
+    view.labelNote(note, text);
+  }
+
   // ---------- Answering (letter -> staff/keyboard) ----------
 
   function onRegionClick(clickedNote) {
@@ -225,6 +230,7 @@
       setTimeout(newQuestion, CORRECT_DELAY_MS);
     } else {
       markAnswerForCurrent(clickedNote, 'incorrect');
+      labelAnswerForCurrent(clickedNote, letterOf(clickedNote.name));
       validNotes.forEach((n) => markAnswerForCurrent(n, 'reveal'));
       showFeedback(`Not quite — that's the ${letter} you were looking for.`, false);
       setTimeout(newQuestion, INCORRECT_DELAY_MS);
