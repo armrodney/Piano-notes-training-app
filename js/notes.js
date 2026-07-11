@@ -124,24 +124,21 @@
     return pool[Math.floor(Math.random() * pool.length)];
   }
 
-  // A same-size (or larger), randomly-shifted slice of the keyboard range
-  // that still contains `anchorOrder`. Always spans at least two full
-  // letter cycles (14 white keys = 2 octaves) so there's a real 2-3-2-3
-  // black-key pattern to read the note's position from, even when the
-  // settings-implied range (e.g. one clef, standard) is narrower than
-  // that. Randomizing the start stops any single note from always landing
-  // at the same spot on screen, so it has to be found relative to the
-  // black-key groups rather than memorized by screen position.
-  const MIN_KEYBOARD_WINDOW = 14;
-  function windowedKeyboardRange(clefKeys, extended, anchorOrder) {
-    const fullRange = getKeyboardRange(clefKeys, extended);
-    const length = Math.max(fullRange.length, MIN_KEYBOARD_WINDOW);
-    const base = fullRange[0].order;
-    const maxShift = Math.max(2, Math.floor(length / 3));
-    const lo = Math.max(-maxShift, anchorOrder - length + 1 - base);
-    const hi = Math.min(maxShift, anchorOrder - base);
-    const shift = lo + Math.floor(Math.random() * (hi - lo + 1));
-    const newBase = base + shift;
+  // A fixed-size slice of the keyboard containing `anchorOrder`, with the
+  // anchor placed at a random position within it. Always exactly two full
+  // letter cycles (14 white keys = 2 octaves) — regardless of how large
+  // the settings-implied range is (e.g. both clefs + extended can span 25
+  // notes) — so the keyboard never grows to show every eligible note at
+  // once, but there's always a real 2-3-2-3 black-key pattern to read the
+  // note's position from. Randomizing where the anchor lands stops any
+  // single note from always appearing at the same spot on screen, so it
+  // has to be found relative to the black-key groups rather than
+  // memorized by screen position.
+  const KEYBOARD_WINDOW_SIZE = 14;
+  function windowedKeyboardRange(anchorOrder) {
+    const length = KEYBOARD_WINDOW_SIZE;
+    const offsetInWindow = Math.floor(Math.random() * length);
+    const newBase = anchorOrder - offsetInWindow;
     const window = [];
     for (let o = newBase; o < newBase + length; o++) {
       window.push({ name: nameFromOrder(o), order: o });

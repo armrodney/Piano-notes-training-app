@@ -179,7 +179,7 @@
     const clefs = activeClefs();
     const extended = state.settings.extendedRange;
     const anchor = randomFromPool(getKeyboardRange(clefs, extended));
-    return windowedKeyboardRange(clefs, extended, anchor.order);
+    return windowedKeyboardRange(anchor.order);
   }
 
   function pickRandom(arr) {
