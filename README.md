@@ -15,18 +15,24 @@ HTML/CSS/JS.
   - Keyboard → Letter — a key is highlighted on the piano, pick the letter
 - **Treble and/or bass clef** — enable either or both; questions are drawn
   randomly from whichever are checked
-- **Extended range** toggle — adds ledger-line notes above/below each staff
-  (and the piano keyboard range grows to match)
+- **Extended range** toggle — adds ledger-line notes above/below each
+  staff, and widens which notes the piano keyboard modes can ask about
+  (the keyboard window itself stays a fixed 14 keys — see below)
 - Natural notes only (no accidentals)
-- The on-screen piano keyboard shows a randomly-shifted 2+ octave slice
-  each question (not always starting on the same note), so keys have to be
-  found relative to the black-key groups rather than memorized by screen
-  position
-- Immediate feedback: correct answers auto-advance quickly; incorrect
-  answers highlight every matching position for the wrong guess (a letter
-  can occur more than once in range) alongside the right answer, label
-  the wrongly-clicked position with its letter, and pause before
-  auto-advancing (no button to click either way)
+- The on-screen piano keyboard always shows a fixed 2-octave (14-key)
+  window, randomly shifted each question — not always starting on the same
+  note and not growing when more clefs/extended range are enabled — so
+  keys have to be found relative to the black-key groups rather than
+  memorized by screen position or count
+- Immediate feedback: correct and incorrect answers both highlight every
+  position that matches the relevant letter (a letter can occur more than
+  once in range), not just the one involved; wrong clicks are also labeled
+  with the letter they landed on. Correct answers auto-advance quickly;
+  incorrect answers pause longer before auto-advancing (no button to click
+  either way)
+- Configurable wait time before the next question (Settings, default
+  700ms) — wrong answers always get a bit longer than whatever is set, so
+  there's still extra time to read them
 - Keyboard shortcuts: press A–G to answer letter-guess questions
 - Session stats (overall accuracy + per-note accuracy) persisted in
   `localStorage`, with a reset button

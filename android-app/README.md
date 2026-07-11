@@ -13,8 +13,8 @@ repo root's `index.html`, `style.css`, and `js/` on every build (see
 
 A GitHub Actions workflow (`.github/workflows/build-apk.yml`) builds this
 automatically, in the same run as the [e-ink variant](../android-app-eink):
-- on every push that touches `index.html`, `style.css`, `js/**`, or either
-  `android-app/` or `android-app-eink/`
+- on every push that touches `index.html`, `style.css`, `index-eink.html`,
+  `style-eink.css`, `js/**`, `android-app/**`, or `android-app-eink/**`
 - or manually via the "Run workflow" button on the Actions tab
 
 It publishes the result to the `android-latest` GitHub Release on this repo
