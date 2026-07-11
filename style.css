@@ -119,7 +119,7 @@ body {
 
 .note-label {
   fill: var(--incorrect);
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 700;
 }
 
@@ -215,7 +215,7 @@ body {
 
 .key-label {
   fill: var(--incorrect);
-  font-size: 13px;
+  font-size: 22px;
   font-weight: 700;
 }
 
