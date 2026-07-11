@@ -36,7 +36,12 @@
     // clickable and call onClick(note).
     draw(notePool, onClick) {
       this.notePool = notePool;
-      const width = notePool.length * WHITE_W + MARGIN * 2;
+      // A black key follows every white key except E and B, matching a
+      // real keyboard's 2-3-2-3... grouping. That's true even for the
+      // last rendered key: draw its trailing black key (with no white key
+      // after it) so the group it belongs to isn't cut short.
+      const trailingBlack = !NO_BLACK_AFTER.includes(notePool[notePool.length - 1].name[0]);
+      const width = notePool.length * WHITE_W + MARGIN * 2 + (trailingBlack ? BLACK_W / 2 : 0);
       const height = WHITE_H + MARGIN * 2;
       this.svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
 
@@ -63,7 +68,7 @@
         this.keyEls.set(note.name, rect);
 
         const letter = note.name[0];
-        if (i < notePool.length - 1 && !NO_BLACK_AFTER.includes(letter)) {
+        if (!NO_BLACK_AFTER.includes(letter)) {
           const bx = MARGIN + (i + 1) * WHITE_W - BLACK_W / 2;
           const black = el('rect', {
             x: bx,

@@ -1,5 +1,13 @@
 (function () {
-  const { getActiveNotes, getKeyboardRange, randomFromPool, randomLetterPromptFromPool, letterOf, CLEFS } = ST.notes;
+  const {
+    getActiveNotes,
+    getKeyboardRange,
+    windowedKeyboardRange,
+    randomFromPool,
+    randomLetterPromptFromPool,
+    letterOf,
+    CLEFS,
+  } = ST.notes;
   const { StaffView } = ST.staff;
   const { PianoView } = ST.keyboard;
   const { StatsTracker } = ST.stats;
@@ -135,6 +143,18 @@
     return keys.length ? keys : ['letter-to-staff'];
   }
 
+  // A randomly-shifted slice of the keyboard, so the same note doesn't
+  // always land in the same screen position across questions (see
+  // windowedKeyboardRange). Anchored on a random note from the full
+  // settings-implied range, then the usual random-letter/random-note
+  // pickers run against this window.
+  function keyboardWindowPool() {
+    const clefs = activeClefs();
+    const extended = state.settings.extendedRange;
+    const anchor = randomFromPool(getKeyboardRange(clefs, extended));
+    return windowedKeyboardRange(clefs, extended, anchor.order);
+  }
+
   function pickRandom(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
   }
@@ -150,10 +170,7 @@
     const type = pickRandom(activeQuestionTypes());
     const info = TYPE_INFO[type];
     const clef = info.target === 'staff' ? pickRandom(activeClefs()) : null;
-    const pool =
-      info.target === 'staff'
-        ? getActiveNotes(clef, state.settings.extendedRange)
-        : getKeyboardRange(activeClefs(), state.settings.extendedRange);
+    const pool = info.target === 'staff' ? getActiveNotes(clef, state.settings.extendedRange) : keyboardWindowPool();
 
     if (info.target === 'staff') {
       els.staffContainer.classList.remove('hidden');
