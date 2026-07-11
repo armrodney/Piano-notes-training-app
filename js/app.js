@@ -12,8 +12,12 @@
   const { PianoView } = ST.keyboard;
   const { StatsTracker } = ST.stats;
 
-  const CORRECT_DELAY_MS = 700;
-  const INCORRECT_DELAY_MS = 1800;
+  const DEFAULT_CORRECT_DELAY_MS = 700;
+  const MIN_CORRECT_DELAY_MS = 100;
+  const MAX_CORRECT_DELAY_MS = 5000;
+  // Wrong answers pause this much longer than the configured wait time, so
+  // there's always extra time to register the correct answer being shown.
+  const INCORRECT_EXTRA_DELAY_MS = 1100;
   const SETTINGS_KEY = 'staffTrainer.settings.v2';
 
   const TYPE_INFO = {
@@ -30,6 +34,7 @@
     letterButtons: document.getElementById('letterButtons'),
     feedback: document.getElementById('feedback'),
     extendedRangeToggle: document.getElementById('extendedRangeToggle'),
+    correctDelayInput: document.getElementById('correctDelayInput'),
     clefCheckboxes: Array.from(document.querySelectorAll('.clef-checkbox')),
     questionTypeCheckboxes: Array.from(document.querySelectorAll('.question-type-checkbox')),
     settingsWarning: document.getElementById('settingsWarning'),
@@ -52,7 +57,14 @@
         'letter-to-keyboard': false,
         'keyboard-to-letter': false,
       },
+      correctDelayMs: DEFAULT_CORRECT_DELAY_MS,
     };
+  }
+
+  function clampDelay(value) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return DEFAULT_CORRECT_DELAY_MS;
+    return Math.min(MAX_CORRECT_DELAY_MS, Math.max(MIN_CORRECT_DELAY_MS, Math.round(n)));
   }
 
   function loadSettings() {
@@ -65,6 +77,7 @@
         extendedRange: !!parsed.extendedRange,
         clefs: Object.assign(defaults.clefs, parsed.clefs),
         questionTypes: Object.assign(defaults.questionTypes, parsed.questionTypes),
+        correctDelayMs: clampDelay(parsed.correctDelayMs ?? defaults.correctDelayMs),
       };
     } catch (e) {
       return defaultSettings();
@@ -119,6 +132,7 @@
       cb.checked = !!state.settings.questionTypes[cb.dataset.value];
     });
     els.extendedRangeToggle.checked = state.settings.extendedRange;
+    els.correctDelayInput.value = state.settings.correctDelayMs;
 
     wireCheckboxGroup(els.clefCheckboxes, (values) => {
       Object.keys(state.settings.clefs).forEach((k) => (state.settings.clefs[k] = values.includes(k)));
@@ -131,6 +145,11 @@
       saveSettings();
       newQuestion();
     });
+    els.correctDelayInput.addEventListener('change', () => {
+      state.settings.correctDelayMs = clampDelay(els.correctDelayInput.value);
+      els.correctDelayInput.value = state.settings.correctDelayMs;
+      saveSettings();
+    });
   }
 
   function activeClefs() {
@@ -141,6 +160,14 @@
   function activeQuestionTypes() {
     const keys = Object.keys(state.settings.questionTypes).filter((k) => state.settings.questionTypes[k]);
     return keys.length ? keys : ['letter-to-staff'];
+  }
+
+  function correctDelay() {
+    return state.settings.correctDelayMs;
+  }
+
+  function incorrectDelay() {
+    return state.settings.correctDelayMs + INCORRECT_EXTRA_DELAY_MS;
   }
 
   // A randomly-shifted slice of the keyboard, so the same note doesn't
@@ -228,13 +255,13 @@
       markAnswerForCurrent(clickedNote, 'correct');
       validNotes.filter((n) => n.name !== clickedNote.name).forEach((n) => markAnswerForCurrent(n, 'reveal'));
       showFeedback('Correct!', true);
-      setTimeout(newQuestion, CORRECT_DELAY_MS);
+      setTimeout(newQuestion, correctDelay());
     } else {
       markAnswerForCurrent(clickedNote, 'incorrect');
       labelAnswerForCurrent(clickedNote, letterOf(clickedNote.name));
       validNotes.forEach((n) => markAnswerForCurrent(n, 'reveal'));
       showFeedback(`Not quite — that's the ${letter} you were looking for.`, false);
-      setTimeout(newQuestion, INCORRECT_DELAY_MS);
+      setTimeout(newQuestion, incorrectDelay());
     }
   }
 
@@ -255,7 +282,7 @@
       btn.classList.add('btn-correct');
       markAnswerForCurrent(note, 'correct');
       showFeedback('Correct!', true);
-      setTimeout(newQuestion, CORRECT_DELAY_MS);
+      setTimeout(newQuestion, correctDelay());
     } else {
       btn.classList.add('btn-incorrect');
       const correctBtn = els.letterButtons.querySelector(`[data-letter="${letterOf(note.name)}"]`);
@@ -266,7 +293,7 @@
       pool.filter((n) => letterOf(n.name) === letter).forEach((n) => markAnswerForCurrent(n, 'incorrect'));
       markAnswerForCurrent(note, 'reveal');
       showFeedback(`Not quite — that note is ${note.name[0]}.`, false);
-      setTimeout(newQuestion, INCORRECT_DELAY_MS);
+      setTimeout(newQuestion, incorrectDelay());
     }
   }
 

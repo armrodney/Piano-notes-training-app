@@ -70,6 +70,12 @@
         </label>
 
         <p id="settingsWarning" class="settings-warning" role="alert"></p>
+
+        <label class="delay-setting-label" for="correctDelayInput">
+          Wait time before next question (ms)
+          <input type="number" id="correctDelayInput" min="100" max="5000" step="50" />
+        </label>
+        <p class="setting-hint">Around 300ms or less is quite short — you may not have time to read the feedback.</p>
       </div>
 
       <div class="stats-panel">
